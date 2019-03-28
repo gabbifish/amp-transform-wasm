@@ -1,0 +1,19 @@
+{
+  "name": "transform-wasm",
+  "version": "1.0.0",
+  "description": "worker that performs AMP transformation on sxg content",
+  "main": "worker.js",
+  "scripts": {
+    "test": "node index.js main.wasm",
+    "build": "webpack index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "node-fetch": "^2.3.0",
+    "uglifyjs-webpack-plugin": "^2.1.2",
+    "webpack": "^4.29.5",
+    "webpack-cli": "^3.2.3"
+  }
+}
