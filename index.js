@@ -28,12 +28,7 @@ async function handle(request) {
 
         let inputString = JSON.stringify(inputObj)
 
-        // Check if the response is an image. If not, we'll just return it.
-        // let type = response.headers.get("Content-Type") || "";
-        // if (!type.startsWith("image/")) return response;
-
-        // OK, we're going to resize. First, read the image data into memory.
-        // bytes = new Uint8Array(await response.arrayBuffer());
+        // First, read the object above into memory.
         bytes = str2ab(inputString)
 
         // Call our WebAssembly module's init() function to allocate space for
@@ -51,8 +46,7 @@ async function handle(request) {
         let resultBytes = memoryBytes.slice(result[0], result[0] + result[1]);
         let resultString = string(resultBytes)
 
-        // Create a new response with the image bytes. Our resizer module always
-        // outputs JPEG regardless of input type, so change the header.
+        // Create a response with the transformed html.
         let newResponse = new Response(resultString);
         newResponse.headers.set("Content-Type", "application/json");
 
