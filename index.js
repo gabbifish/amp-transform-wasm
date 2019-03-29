@@ -18,18 +18,15 @@ async function handle(request) {
         if (typeof inst == 'undefined') {
             instantiate();
         }
-        // Forward the request to our origin.
-        let response = await fetch("https://cloudflareamp.org/amp/home");
 
-        let inputObj = {
-            html: await response.text(),
-            url: "https://cloudflareamp.org/amp/home"
+        let input = await request.json()
+
+        if (!input.html || !input.url) {
+            throw Error('both the \'html\' and \'url\' fields must be populated')
         }
 
-        let inputString = JSON.stringify(inputObj)
-
         // Read the input into shared memory.
-        bytes = str2ab(inputString)
+        bytes = str2ab(JSON.stringify(input))
 
         // Call our WebAssembly module's init() function to allocate space for
         // the input.
@@ -39,6 +36,10 @@ async function handle(request) {
         memoryBytes.set(bytes, pointer);
 
         let result = callTransform();
+
+        if (!result) {
+            throw Error("Transformation failed; are you sure you put correct HTML in your request's html field?")
+        }
 
         // arena could have moved
         memoryBytes = new Uint8Array(inst.exports.mem.buffer);
