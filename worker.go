@@ -27,9 +27,23 @@ type TransformRequest struct {
 	URL string `json:"url"`
 }
 
+type Preloads struct {
+	URL string `json:"url"`
+	As  string `json:"as"`
+}
+
 type TransformResponse struct {
 	HTML    string     `json:"transformed_html"`
+	Preload []Preloads `json:"preload"`
 	Error   string     `json:"error"`
+}
+
+func parsePreloads(preloadEntries []*rpb.Metadata_Preload) []Preloads {
+	preloads := make([]Preloads, len(preloadEntries))
+	for i, entry := range preloadEntries {
+		preloads[i] = Preloads{URL: entry.Url, As: entry.As}
+	}
+	return preloads
 }
 
 func callTransform(this js.Value, args []js.Value) interface{} {
@@ -43,7 +57,7 @@ func callTransform(this js.Value, args []js.Value) interface{} {
 		log.Fatal("Unmarshalling request params failed")
 	}
 	r = &rpb.Request{DocumentUrl: transformReq.URL, Html: transformReq.HTML, Config: rpb.Request_DEFAULT}
-	transformedData, _, err := t.Process(r)
+	transformedData, preloads, err := t.Process(r)
 
 	transformResp = TransformResponse{}
 	if err != nil {
@@ -51,6 +65,7 @@ func callTransform(this js.Value, args []js.Value) interface{} {
 		transformResp.Error = err.Error()
 	}
 	transformResp.HTML = transformedData
+	transformResp.Preload = parsePreloads(preloads.Preloads)
 
 	rawBytesResponse, err = json.Marshal(&transformResp)
 	if err != nil {
