@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"reflect"
@@ -72,15 +71,10 @@ func callTransform(this js.Value, args []js.Value) interface{} {
 		log.Fatal("Failed to marshal response")
 	}
 
-	w := new(bytes.Buffer)
-
-	w.Write(rawBytesResponse)
-	out := w.Bytes()
-
-	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&out))
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&rawBytesResponse))
 	ptr := uintptr(unsafe.Pointer(hdr.Data))
 
-	return []interface{}{int(ptr), len(out)}
+	return []interface{}{int(ptr), len(rawBytesResponse)}
 }
 
 func registerCallbacks() {
