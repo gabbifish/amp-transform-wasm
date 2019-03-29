@@ -11,16 +11,6 @@ import (
 	rpb "github.com/ampproject/amppackager/transformer/request"
 )
 
-var buf []uint8
-
-func initMem(this js.Value, args []js.Value) interface{} {
-	length := args[0].Int()
-	buf = make([]uint8, length)
-	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
-	ptr := uintptr(unsafe.Pointer(hdr.Data))
-	return int(ptr)
-}
-
 type TransformRequest struct {
 	HTML string `json:"html"`
 	URL string `json:"url"`
@@ -35,6 +25,16 @@ type TransformResponse struct {
 	HTML    string     `json:"transformed_html"`
 	Preload []Preloads `json:"preload"`
 	Error   string     `json:"error"`
+}
+
+var buf []uint8
+
+func initMem(this js.Value, args []js.Value) interface{} {
+	length := args[0].Int()
+	buf = make([]uint8, length)
+	hdr := (*reflect.SliceHeader)(unsafe.Pointer(&buf))
+	ptr := uintptr(unsafe.Pointer(hdr.Data))
+	return int(ptr)
 }
 
 func parsePreloads(preloadEntries []*rpb.Metadata_Preload) []Preloads {

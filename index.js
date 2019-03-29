@@ -4,7 +4,7 @@ let  bytes, inst;
 
 addEventListener("fetch", function(event) {
     event.respondWith(handle(event.request));
-}.bind(undefined));
+});
 
 function instantiate() {
     const go = new Go();
