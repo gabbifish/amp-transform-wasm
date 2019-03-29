@@ -7,13 +7,14 @@ the amount of heap memory used can reasonably fit in a worker.
 
 ```bash
 git clone https://github.com/gabbifish/go
-cd go
+cd go/
 git checkout gabbi-small
 src/make.bash
 ```
 
 Then use it to build the wasm binary from worker.go:
 ```bash
+cd go-wasm/
 GOOS=js GOARCH=wasm path/to/custom-go/bin/go build -o main.wasm worker.go
 ```
 
