@@ -1,10 +1,10 @@
 import './wasm_exec'
 
-let mod, bytes, inst;
+let  bytes, inst;
 
 addEventListener("fetch", function(event) {
     event.respondWith(handle(event.request));
-}.bind(this));
+}.bind(undefined));
 
 function instantiate() {
     const go = new Go();
@@ -28,11 +28,11 @@ async function handle(request) {
 
         let inputString = JSON.stringify(inputObj)
 
-        // First, read the object above into memory.
+        // Read the input into shared memory.
         bytes = str2ab(inputString)
 
         // Call our WebAssembly module's init() function to allocate space for
-        // the image.
+        // the input.
         let pointer = initMem(bytes.length);
 
         let memoryBytes = new Uint8Array(inst.exports.mem.buffer);
@@ -44,10 +44,9 @@ async function handle(request) {
         memoryBytes = new Uint8Array(inst.exports.mem.buffer);
         // Extract the result bytes from WebAssembly memory.
         let resultBytes = memoryBytes.slice(result[0], result[0] + result[1]);
-        let resultString = string(resultBytes)
 
-        // Create a response with the transformed html.
-        let newResponse = new Response(resultString);
+        // Create a new response with the transformed html output.
+        let newResponse = new Response(resultBytes);
         newResponse.headers.set("Content-Type", "application/json");
 
         // Return the response.
@@ -59,10 +58,10 @@ async function handle(request) {
 
 // source: http://stackoverflow.com/a/11058858
 function str2ab(str) {
-    let buf = new ArrayBuffer(str.length); // 1 byte for each ASCII char
-    let bufView = new Uint8Array(buf);
-    for (let i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str[i];
+    var buf = new ArrayBuffer(str.length); // 1 bytes for each char (they will all be ascii)
+    var bufView = new Uint8Array(buf);
+    for (var i=0, strLen=str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
     }
-    return buf;
+    return bufView;
 }
