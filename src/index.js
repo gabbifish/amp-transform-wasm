@@ -45,6 +45,10 @@ async function handle(request) {
         // Return the response.
         return newResponse;
     } catch (err) {
-        return new Response(err.stack)
+        return new Response(JSON.stringify({
+            transformed_html: null,
+            preload: null,
+            error: err.stack
+        }))
     }
 }

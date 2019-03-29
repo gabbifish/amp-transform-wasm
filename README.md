@@ -15,7 +15,7 @@ src/make.bash
 Then use it to build the wasm binary from worker.go:
 ```bash
 cd go-wasm/
-GOOS=js GOARCH=wasm path/to/custom-go/bin/go build -o main.wasm worker.go
+GOOS=js GOARCH=wasm path/to/custom-go/bin/go build -o main.wasm main.go
 ```
 
 Upload the wasm to Cloudflare Workers with name `TRANSFORM_WASM`.
