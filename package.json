@@ -4,8 +4,7 @@
   "description": "worker that performs AMP transformation on sxg content",
   "main": "worker.js",
   "scripts": {
-    "test": "node index.js main.wasm",
-    "build": "webpack index.js"
+    "build": "webpack src/index.js"
   },
   "author": "",
   "license": "ISC",
